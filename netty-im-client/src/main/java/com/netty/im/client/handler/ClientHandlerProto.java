@@ -1,20 +1,19 @@
 package com.netty.im.client.handler;
 
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.netty.im.client.PassThroughMessageHelper;
 import com.netty.im.client.utils.NettyClientUtils;
 import com.netty.im.core.message.Message;
-
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandlerProto extends ChannelInboundHandlerAdapter {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -24,9 +23,9 @@ public class ClientHandlerProto extends ChannelInboundHandlerAdapter {
 		Message message = null;
 		try {
 			message = (Message) msg;
-		} catch (Exception e) { // 转换对象异常，说明非法通信，关闭连接
+		} catch (Exception e) { // 转换对象异常，说明非法通信z，关闭连接
 			ctx.close();
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 		logger.info("client:" + message.toString());
 
@@ -36,10 +35,15 @@ public class ClientHandlerProto extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
+		logger.error(cause.getMessage(),cause);
 		ctx.close();
 	}
 
+	/**
+	 * 连接建立触发
+	 * @param ctx
+	 * @throws Exception
+	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		logger.info("和服务端建立连接成功" + ctx.channel());
@@ -47,11 +51,17 @@ public class ClientHandlerProto extends ChannelInboundHandlerAdapter {
 		super.channelActive(ctx);
 	}
 
+	/**
+	 * 断线触发
+	 * @param ctx
+	 * @throws Exception
+	 */
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		logger.error("掉线了...");
 		// 使用过程中断线重连
-		final EventLoop eventLoop = ctx.channel().eventLoop();
+		Channel channel = ctx.channel();
+		logger.error("连接服务端ip {}掉线了",channel.remoteAddress());
+		final EventLoop eventLoop = channel.eventLoop();
 		eventLoop.schedule(new Runnable() {
 			@Override
 			public void run() {

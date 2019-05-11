@@ -1,11 +1,6 @@
 package com.netty.im.client.handler;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLEngine;
-
 import com.netty.im.core.message.Message;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -17,6 +12,9 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import javax.net.ssl.SSLEngine;
+import java.util.concurrent.TimeUnit;
+
 public class SslChannelInitializer extends ChannelInitializer<Channel> {
 	private final SslContext context;
 
@@ -26,11 +24,11 @@ public class SslChannelInitializer extends ChannelInitializer<Channel> {
 
 	@Override
 	protected void initChannel(Channel ch) throws Exception {
+		ChannelPipeline pipeline = ch.pipeline();
 		SSLEngine engine = context.newEngine(ch.alloc());
 		engine.setUseClientMode(true);
-		ch.pipeline().addFirst("ssl", new SslHandler(engine));
-		ChannelPipeline pipeline = ch.pipeline();
-		
+		pipeline.addFirst("ssl", new SslHandler(engine));
+
 		
 		pipeline.addLast("ping", new IdleStateHandler(180, 180, 60 * 10, TimeUnit.SECONDS));
 		pipeline.addLast(new ProtobufVarint32FrameDecoder());
