@@ -1,0 +1,12 @@
+syntax = "proto3";
+option java_outer_classname = "MessageProto";
+message Message {  
+  string id = 1;
+  int32 messageType = 2;  //1：心跳消息  ，2：接收成功回执，3：单聊消息，4：群聊消息，5：广播消息，6：在线音频、7：在线视频
+  int32 contentType =3;  //1：文本消息、2：图片消息、3：音频消息、4：视频消息、5：红包消息
+  string content = 4;
+  int64 receiver = 5;
+  int64 sender = 6;
+  string token=7; //鉴权令牌
+  int64 timeMillis=8;  //服务器端接收到的时间
+}

@@ -1,0 +1,2 @@
+cmd到该文件目录执行：
+protoc ./netty-im-core/src/main/java/com/netty/im/core/message/Message.proto --java_out=./netty-im-core/src/main/java/com/netty/im/core/message/
