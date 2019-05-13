@@ -5,7 +5,7 @@
 	<artifactId>netty-im</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
-	<name>yinjihuan</name>
+	<name>myim</name>
 	<description>即时通讯</description>
 
 	<modules>

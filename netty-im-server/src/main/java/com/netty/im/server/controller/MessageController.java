@@ -12,7 +12,7 @@ import io.netty.channel.Channel;
 
 /**
  * 消息API,提供消息的基本操作
- * @author yinjihuan
+ * @author myim
  *
  */
 @RestController
